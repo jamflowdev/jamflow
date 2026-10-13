@@ -1,0 +1,163 @@
+---
+import FramerDemo from '../components/FramerDemo';
+import '../styles/global.css';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Jamflow — Astro + GSAP + Lenis + Framer Motion</title>
+  </head>
+  <body>
+    <div class="glow-bg"></div>
+
+    <header class="site-nav">
+      <div class="brand">jamflow</div>
+      <div class="status-tag">Live Animation Stack</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1 class="hero-title">
+          Motion-First Web <br />
+          <span class="gradient-text">Engineered for Flow</span>
+        </h1>
+        <p class="hero-subtitle">
+          High-performance Astro starter configured with smooth Lenis scrolling, GSAP ScrollTrigger timelines, and reactive Framer Motion components.
+        </p>
+        <div class="tech-pills">
+          <span class="pill">⚡ Astro 5+</span>
+          <span class="pill">🌊 Lenis Smooth Scroll</span>
+          <span class="pill">🎬 GSAP + ScrollTrigger</span>
+          <span class="pill">✨ Framer Motion</span>
+        </div>
+      </section>
+
+      <section class="showcase-grid">
+        <div class="demo-box gsap-showcase">
+          <div class="badge">GSAP Animation Timeline</div>
+          <h3>Scroll & Timeline Orchestration</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+            Staggered keyframes powered by GSAP.
+          </p>
+          <div class="gsap-playground">
+            <div class="gsap-box box-1">Timeline Stagger 01</div>
+            <div class="gsap-box box-2">Timeline Stagger 02</div>
+            <div class="gsap-box box-3">Timeline Stagger 03</div>
+          </div>
+        </div>
+
+        <FramerDemo client:load />
+      </section>
+
+      <section class="scroll-track-section">
+        <div class="badge">Lenis + ScrollTrigger Sync</div>
+        <h2>Butter-Smooth Inertia & Parallax</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0.75rem auto 0;">
+          Scroll down to see the synchronized progress meter and staggered card reveals driven by Lenis virtual scroll.
+        </p>
+
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="scrollProgress"></div>
+        </div>
+
+        <div class="scroll-cards">
+          <div class="scroll-card reveal-card">
+            <h4>01. Smooth Easing</h4>
+            <p>Lenis intercepts native scroll events and applies calibrated exponential inertia easing.</p>
+          </div>
+          <div class="scroll-card reveal-card">
+            <h4>02. Frame Lockstep</h4>
+            <p>GSAP ticker synchronizes with Lenis raf tick cycle, eliminating scroll jitter completely.</p>
+          </div>
+          <div class="scroll-card reveal-card">
+            <h4>03. Islands of Motion</h4>
+            <p>Framer Motion powers fine-grained UI physics inside Astro reactive islands.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Jamflow Starter • Astro + GSAP + Lenis + Framer Motion</p>
+    </footer>
+
+    <script>
+      import { initSmoothScroll } from '../scripts/lenis';
+      import { gsap } from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+      // Initialize Lenis synchronized with ScrollTrigger
+      initSmoothScroll();
+
+      // GSAP Hero Entrance
+      gsap.from('.hero-title', {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        ease: 'power3.out',
+      });
+
+      gsap.from('.hero-subtitle', {
+        opacity: 0,
+        y: 20,
+        duration: 0.9,
+        delay: 0.2,
+        ease: 'power3.out',
+      });
+
+      gsap.from('.tech-pills .pill', {
+        opacity: 0,
+        y: 15,
+        stagger: 0.1,
+        duration: 0.8,
+        delay: 0.4,
+        ease: 'power3.out',
+      });
+
+      // GSAP Stagger Demo Loop
+      gsap.fromTo(
+        '.gsap-box',
+        { scale: 0.94, opacity: 0.6 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.25,
+          repeat: -1,
+          yoyo: true,
+          ease: 'power2.inOut',
+        }
+      );
+
+      // Scroll Progress Bar pinned with ScrollTrigger
+      ScrollTrigger.create({
+        trigger: 'body',
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: (self) => {
+          const progressBar = document.getElementById('scrollProgress');
+          if (progressBar) {
+            progressBar.style.width = `${self.progress * 100}%`;
+          }
+        },
+      });
+
+      // Scroll Reveal Cards
+      gsap.from('.reveal-card', {
+        scrollTrigger: {
+          trigger: '.scroll-cards',
+          start: 'top 85%',
+        },
+        opacity: 0,
+        y: 35,
+        stagger: 0.15,
+        duration: 0.8,
+        ease: 'power3.out',
+      });
+    </script>
+  </body>
+</html>
